@@ -296,14 +296,44 @@
 </li>
 <li><p>当需要兼容多个Python版本时，请勿把 <code>Pipfile.lock</code> 纳入版本控制。</p>
 </li>
-<li><p>Specify your target Python version in your Pipfile’s <code>[requires]</code> section. Ideally, you should only have one target Python version, as this is a deployment tool. <code>python_version</code> should be in the format <code>X.Y</code> (or <code>X</code>) and <code>python_full_version</code> should be in <code>X.Y.Z</code> format.</p>
-</li>
 <li><p><code>pipenv install</code> 语法与 <code>pip install</code> 完全兼容，完整文档可见 <a target="_blank" rel="noopener" href="https://pip.pypa.io/en/stable/user_guide/#installing-packages">这里</a> 。</p>
 </li>
-<li><p>Note that the <code>Pipfile</code> uses the <a target="_blank" rel="noopener" href="https://github.com/toml-lang/toml#user-content-spec">TOML Spec</a>.</p>
-</li>
 </ul>
-<h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2>
+<h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><h3 id="Basic-Installation-基本安装"><a href="#Basic-Installation-基本安装" class="headerlink" title="Basic Installation 基本安装"></a>Basic Installation 基本安装</h3><p>Virtualenvwrapper 应该安装到安装 virtualenv 的同一个全局site-packages区域。您可能需要管理员特权来完成此操作。最简单的安装方法是使用 pip:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
+<p>或:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
+<p>除了将其安装到全局site-packages 之外，还有一种方法是将其添加到用户的本地目录(通常是 ~/. local)。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install --user virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
+<h3 id="Shell-Startup-File-启动文件"><a href="#Shell-Startup-File-启动文件" class="headerlink" title="Shell Startup File 启动文件"></a>Shell Startup File 启动文件</h3><p>添加三行到您的 shell 启动文件(<code>.bashrc</code>, <code>.profile</code>, etc.)来设置虚拟环境所在路径，开发项目目录的位置，以及与这个包一起安装的脚本的位置:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</span><br><span class="line"><span class="built_in">export</span> PROJECT_HOME=<span class="variable">$HOME</span>/Devel</span><br><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh</span><br></pre></td></tr></table></figure>
+
+<p>编辑之后，重新加载启动文件(例如，运行 source ~/. bashrc)。</p>
+<h3 id="Lazy-Loading-延迟加载"><a href="#Lazy-Loading-延迟加载" class="headerlink" title="Lazy Loading 延迟加载"></a>Lazy Loading 延迟加载</h3><p>提供了一种替代的初始化脚本，用于以惰性方式加载 virtualenvwrapper。使用 virtualenvwrapper lazy，而不是直接采购 virtualenvwrapper.sh。如果你的 $PATH 上没有 VIRTUALENVWRAPPER.sh ，设置 VIRTUALENVWRAPPER script 来指向它。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</span><br><span class="line"><span class="built_in">export</span> PROJECT_HOME=<span class="variable">$HOME</span>/Devel</span><br><span class="line"><span class="built_in">export</span> VIRTUALENVWRAPPER_SCRIPT=/usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh</span><br><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper_lazy.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h3><ol>
+<li><p><code>workon</code></p>
+<p>将打印一个环境列表(空)</p>
+</li>
+<li><p><code>mkvirtualenv temp</code></p>
+<p>创建一个新的环境,<code>temp</code>  使用默认python</p>
+<p>如需要指定python版本 使用 <code>-p</code></p>
+</li>
+<li><p><code>workon</code></p>
+<p>这一次<code>temp</code> 将会出现在列表中</p>
+</li>
+</ol>
+<h3 id="Python-Interpreter-virtualenv-and-PATH"><a href="#Python-Interpreter-virtualenv-and-PATH" class="headerlink" title="Python Interpreter, virtualenv, and $PATH"></a>Python Interpreter, virtualenv, and $PATH</h3><p>在启动过程中， virtualenvwrapper.sh 在 $PATH 上找到第一个 python 和 virtualenv 程序，并记住它们以便以后使用。这消除了 $PATH 更改时的任何冲突，从而在未安装 virtualenvwrapper 或安装了不同版本的 virtualenv 的虚拟环境中启用解释器。由于这种行为，在采购 virtualenvwrapper.sh 前设置 $PATH 非常重要。例如:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh</span><br></pre></td></tr></table></figure>
+
+<p>要覆盖 $PATH 搜索，将变量 VIRTUALENVWRAPPER _ python 设置为解释器要使用的完整路径，将 VIRTUALENVWRAPPER _ virtualenv 设置为要使用的 virtualenv 二进制文件的完整路径。这两个变量都必须在采购 virtualenvwrapper.sh 之前设置。例如:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> VIRTUALENVWRAPPER_PYTHON=/usr/<span class="built_in">local</span>/bin/python</span><br><span class="line"><span class="built_in">export</span> VIRTUALENVWRAPPER_VIRTUALENV=/usr/<span class="built_in">local</span>/bin/virtualenv</span><br><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/bin/virtualenvwrapper.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
       
     </div>
 
